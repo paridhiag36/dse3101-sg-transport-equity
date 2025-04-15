@@ -1,0 +1,109 @@
+---
+title: "Data_Prep2"
+author: "Dawn Koh"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+# reading the TypeScript file from source: https://github.com/horensen/sg-areas/blob/main/src/data/subzones.ts
+ts_file <- readLines(".../datasets/subzones.ts")
+
+# combining lines into one long string
+ts_data <- paste(ts_file, collapse = " ")
+```
+
+```{r}
+# defining regex patterns to extract subzones
+pattern_subzone <- "\\[Subzone\\.([A-Z_]+)\\]:"
+
+# extracting and cleaning planning area plus subzone names
+PA_subzones <- str_match_all(ts_data, pattern_subzone)[[1]][, 2]
+print(head(PA_subzones))
+```
+
+
+```{r}
+# defining regex patterns to extract subzone names
+pattern_name <- 'name:\\s*\\{\\s*en:\\s*"([^"]+)"'
+
+# extracting and cleaning the subzone names
+subzone_names <- str_match_all(ts_data, pattern_name)[[1]][, 2]
+print(head(subzone_names))
+
+```
+
+```{r}
+# Defining Regex pattern to extract coordinates
+pattern_coordinates <- "coordinates: \\{ latitude: (.*?), longitude: (.*?) \\}"
+coordinates_matches <- str_match_all(ts_data, pattern_coordinates)[[1]]
+coordinates <- paste0("Lat: ", coordinates_matches[, 2], ", Long: ", coordinates_matches[, 3])
+
+
+# Split latitude and longitude into separate columns
+# Extract latitude and longitude separately
+latitude <- coordinates_matches[, 2]
+longitude <- coordinates_matches[, 3]
+
+
+print(head(longitude))
+print(head(latitude))
+
+```
+
+
+```{r}
+# defining regex patterns to extract planning area
+
+pattern_area <- "area: Area\\.([A-Z_]+),"
+planning_areas <- str_match_all(ts_data, pattern_area)[[1]][, 2]
+
+# clean up area names
+planning_areas <- gsub("_", " ", planning_areas)                  # Replace underscores with spaces
+planning_areas <- str_to_title(tolower(planning_areas))           # Convert to title case
+
+print(head(planning_areas))
+
+```
+
+```{r}
+# When checking the missing values in the PA_Subzone column, we realised that Pasir Panjang 1, Pasir Panjang 2 and Lorong 8 Toa Payoh were missing, despite having values under the Subzone_Name, Latitude and Longitude and Planning_Area columns. Hence, instead of removing the missing observations, we decided to manually add them into the data frame.
+
+# Insert missing subzones and shift rows down
+PA_subzones <- append(PA_subzones, "QUE_PASIR_PANJANG_1", after = 210)
+PA_subzones <- append(PA_subzones, "QUE_PASIR_PANJANG_2", after = 211)
+PA_subzones <- append(PA_subzones, "TAP_LORONG_8_TOA_PAYOH", after = 282)
+
+# Check the updated length and print affected rows
+length(PA_subzones)  # Should now be 319
+PA_subzones[c(210:214, 281:285)]
+PA_subzones
+
+```
+```{r}
+#Create data frame
+subzone_df <- data.frame(
+  PA_Subzone = PA_subzones,
+  Subzone_Name = subzone_names,
+  Latitude = latitude,
+  Longitude = longitude,
+  Planning_Area = planning_areas,
+  stringsAsFactors = FALSE
+)
+```
+
+
+```{r}
+#Generate csv file
+write.csv(subzone_df, ".../datasets/subzones_cleaned.csv", row.names = FALSE)
+```
+
+
+
+
+
