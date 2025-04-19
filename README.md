@@ -55,3 +55,8 @@ healthcare-final.csv
 full-simulation.csv
 subzone_boundaries.geojson
 planning_area_demographics.csv
+
+Finally, to run the app: 
+1. Download the prototype_final folder.
+2. Ensure that the libraries listed in global.R are installed. 
+3. Just run app.R
