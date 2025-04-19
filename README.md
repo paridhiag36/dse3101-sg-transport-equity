@@ -1,6 +1,8 @@
 # dse3101-sg-transport-equity
 This repository is a cleaned and reorganized version of our original project repository. The original had too many commits and a disorganized file structure, making it difficult to maintain. This version provides a fresh start with a clear file hierarchy and updated documentation.
 
+⚠️ Before running any data prep files (R or Rmd), please ensure your current working directory is correctly set. Edit the file paths for input datasets as needed.
+
 📁 Repository Structure
 1. datasets/
 Contains both raw and processed datasets used throughout the project.
