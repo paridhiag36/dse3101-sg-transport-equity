@@ -38,6 +38,7 @@ Outputs: planning_area_demographics.csv
 - CombineHealthCareQueries.Rmd
 Combines and normalizes healthcare query outputs from the onemap_query/ folder.
 Outputs: healthcareUpdatedQuery_onemap.csv, healthcareUpdatedQueryNormalised_onemap.csv
+And a working example for this final file since it was too big for Github: WorkingExample_HealthcareNormalized.csv
 
 3. onemap_query/
 Contains:
